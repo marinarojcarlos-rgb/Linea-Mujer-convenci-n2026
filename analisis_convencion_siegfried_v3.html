@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Análisis de Mercado — Línea Mujer | Siegfried 2026</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+<style>
+  :root {
+    --red:#C0392B; --dark:#1a1a2e; --green:#1e8449; --gl:#27ae60;
+    --gold:#d68910; --blue:#1a5276; --ar:#e74c3c;
+    --bg:#f4f6f8; --white:#fff; --text:#1c2833; --muted:#717d7e; --border:#e5e8e8;
+    --sie-color: rgba(192,57,43,1);
+    --sie-fill: rgba(192,57,43,0.15);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
+
+  .page-header{background:linear-gradient(130deg,#0d1b2a 0%,#1a1a2e 50%,var(--red) 100%);color:white;padding:44px 60px 36px;position:relative;overflow:hidden}
+  .page-header::after{content:'';position:absolute;right:-80px;top:-80px;width:400px;height:400px;background:rgba(255,255,255,.04);border-radius:50%}
+  .page-header .brand{font-size:12px;letter-spacing:4px;text-transform:uppercase;opacity:.75;margin-bottom:10px}
+  .page-header h1{font-size:34px;font-weight:800;line-height:1.15}
+  .page-header .sub{opacity:.8;margin-top:8px;font-size:15px}
+  .page-header .meta{opacity:.55;margin-top:18px;font-size:12px;letter-spacing:.5px}
+
+  /* NAV */
+  .nav-bar{background:var(--dark);display:flex;gap:0;overflow-x:auto;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+  .nav-bar a{color:rgba(255,255,255,.7);text-decoration:none;padding:13px 20px;font-size:12px;font-weight:600;letter-spacing:.5px;white-space:nowrap;transition:all .2s;border-bottom:3px solid transparent}
+  .nav-bar a:hover{color:white;background:rgba(255,255,255,.08);border-bottom-color:var(--red)}
+
+  .wrap{max-width:1200px;margin:0 auto;padding:30px 40px}
+
+  .sec-title{font-size:20px;font-weight:800;color:var(--dark);border-left:5px solid var(--red);padding:6px 0 6px 16px;margin:44px 0 20px;letter-spacing:.3px;scroll-margin-top:50px}
+  .sec-title span{font-size:13px;font-weight:400;color:var(--muted);margin-left:10px}
+  .sub-title{font-size:15px;font-weight:700;color:var(--dark);margin:24px 0 10px}
+
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:20px}
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+
+  .mcard{background:var(--white);border-radius:12px;padding:18px 20px;box-shadow:0 2px 10px rgba(0,0,0,.07);border-top:4px solid var(--red)}
+  .mcard.green{border-top-color:var(--gl)}.mcard.gold{border-top-color:var(--gold)}.mcard.blue{border-top-color:var(--blue)}
+  .mcard .ml{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+  .mcard .mv{font-size:24px;font-weight:800;color:var(--dark)}
+  .mcard .ms{font-size:13px;margin-top:4px}
+  .up{color:var(--gl);font-weight:700}.dn{color:var(--ar);font-weight:700}.fl{color:var(--muted);font-weight:600}
+
+  /* CHART CARD */
+  .chart-card{background:var(--white);border-radius:14px;padding:22px 24px;box-shadow:0 2px 14px rgba(0,0,0,.08);margin:16px 0}
+  .chart-card h3{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--border)}
+  .chart-card .chart-note{font-size:11px;color:var(--muted);margin-top:8px;text-align:center}
+  .chart-wrap{position:relative}
+
+  /* CHART GRID */
+  .chart-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:16px 0}
+  .chart-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:16px 0}
+
+  table.dt{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0 18px}
+  table.dt th{background:var(--dark);color:white;padding:9px 13px;text-align:left;font-size:12px;font-weight:600;letter-spacing:.4px}
+  table.dt td{padding:8px 13px;border-bottom:1px solid var(--border);vertical-align:middle}
+  table.dt tr:last-child td{border-bottom:none}
+  table.dt tr:hover td{background:#fafbfc}
+  table.dt .num{text-align:right;font-variant-numeric:tabular-nums}
+  table.dt .sie td{background:#fef5f4}
+  table.dt .sie td:first-child{font-weight:700}
+  .ms-c{text-align:right;font-weight:800;color:var(--red)}
+  .ms-c.ldr{color:var(--green)}
+  .ie-pos{color:var(--green);font-weight:700}.ie-neg{color:var(--ar);font-weight:700}
+
+  .ibox{border-radius:10px;padding:14px 16px;margin:10px 0;font-size:13.5px;line-height:1.55}
+  .ibox strong{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px}
+  .ibox.ok{background:#eafaf1;border-left:4px solid var(--gl)}
+  .ibox.warn{background:#fef9e7;border-left:4px solid var(--gold)}
+  .ibox.info{background:#eaf2ff;border-left:4px solid var(--blue)}
+  .ibox.alert{background:#fdedec;border-left:4px solid var(--ar)}
+  .ibox-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:14px 0}
+
+  .ie-box{display:inline-block;border-radius:6px;padding:3px 10px;font-size:13px;font-weight:800}
+  .ie-box.pos{background:#d5f5e3;color:var(--green)}.ie-box.neg{background:#fdecea;color:var(--ar)}
+
+  .share-timeline{display:flex;align-items:center;flex-wrap:wrap;gap:0;margin:14px 0;background:var(--white);border-radius:12px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+  .sy{text-align:center;padding:0 10px}
+  .sy .yr{font-size:11px;color:var(--muted);margin-bottom:4px}
+  .sy .pct{font-size:22px;font-weight:800;color:var(--dark)}
+  .sy-arrow{font-size:22px;color:var(--gl)}
+
+  hr{border:none;border-top:2px solid var(--border);margin:36px 0}
+
+  table.monthly{font-size:12px}
+  table.monthly th,table.monthly td{padding:6px 10px}
+
+  .footer{background:var(--dark);color:rgba(255,255,255,.55);padding:20px 60px;font-size:11px;text-align:center;margin-top:40px}
+
+  @media(max-width:900px){.grid-2,.grid-3,.grid-4,.chart-grid-2,.chart-grid-3{grid-template-columns:1fr 1fr}}
+  @media(max-width:600px){.grid-4,.chart-grid-3{grid-template-columns:1fr}.chart-grid-2{grid-template-columns:1fr}}
+  @media print{.page-header,table.dt th,.mcard{-webkit-print-color-adjust:exact;print-color-adjust:exact}.nav-bar{display:none}}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="brand">Siegfried Argentina · Línea Mujer</div>
+  <h1>Análisis de Mercado — Convención Ginecología 2026</h1>
+  <div class="sub">ISIS · SIDERBLUT COMPLEX · TRIP D3 · CALCIO DUPOMAR · DELTROX · CLIMATIX</div>
+  <div class="meta">Datos IMS/IQVIA · Enero 2024 — Diciembre 2025 · Febrero 2026</div>
+</div>
+
+<nav class="nav-bar">
+  <a href="#isis">1. ISIS</a>
+  <a href="#siderblut">2. Siderblut Complex</a>
+  <a href="#tripd3">3. Trip D3</a>
+  <a href="#calcio">4. Calcio Dupomar</a>
+  <a href="#deltrox">5. Deltrox</a>
+  <a href="#climatix">6. Climatix</a>
+</nav>
+
+<div class="wrap">
+
+<!-- ═══════════════════════════ 1. ISIS ═══════════════════════════ -->
+<div id="isis" class="sec-title">1. FAMILIA ISIS — Anticonceptivos Orales</div>
+
+<div class="grid-4">
+  <div class="mcard"><div class="ml">Mercado total 2025</div><div class="mv">16.771.700</div><div class="ms">uds <span class="up">▲+1,1%</span></div></div>
+  <div class="mcard green"><div class="ml">DRSP+EE — mayor segmento</div><div class="mv">40,6%</div><div class="ms">del mercado</div></div>
+  <div class="mcard green"><div class="ml">DRSP Sola (sin estrógeno)</div><div class="mv">+26,3%</div><div class="ms">el segmento más dinámico</div></div>
+  <div class="mcard blue"><div class="ml">ISIS Siegfried total 2025</div><div class="mv">1.384.080</div><div class="ms">uds <span class="up">▲+7,5%</span></div></div>
+</div>
+
+<!-- CHART: Composición mercado -->
+<div class="chart-grid-2">
+  <div class="chart-card">
+    <h3>📊 Composición del mercado anticonceptivo oral — 2025</h3>
+    <div class="chart-wrap" style="height:300px"><canvas id="chartIsisMoleculas"></canvas></div>
+    <p class="chart-note">La Drospirenona (sola + con EE) concentra el 51,9% del mercado total</p>
+  </div>
+  <div class="chart-card">
+    <h3>📊 IE por segmento Drospirenona+EE — Siegfried 2024→2025</h3>
+    <div class="chart-wrap" style="height:300px"><canvas id="chartIsisIE"></canvas></div>
+    <p class="chart-note">IE &gt; 100 = Siegfried gana market share en ese segmento</p>
+  </div>
+</div>
+
+<!-- CHART: Alta Dosis -->
+<div class="sub-title">Oportunidad estratégica: Alta Dosis</div>
+<div class="chart-grid-2">
+  <div class="chart-card">
+    <h3>📊 Market Share — Alta Dosis DRSP+EE 30mcg · 2025</h3>
+    <div class="chart-wrap" style="height:300px"><canvas id="chartAltaDosisMS"></canvas></div>
+    <p class="chart-note">ISIS tiene solo 4,8% — líderes están cayendo → oportunidad de captura</p>
+  </div>
+  <div class="chart-card">
+    <h3>📊 Evolución Alta Dosis — Top competidores 2024 vs 2025</h3>
+    <div class="chart-wrap" style="height:300px"><canvas id="chartAltaDosisEvol"></canvas></div>
+    <p class="chart-note">ISIS: único producto que creció en el segmento (+1,6%)</p>
+  </div>
+</div>
+
+<div class="ibox alert"><strong>Oportunidad en Alta Dosis</strong>
+4,3M de unidades anuales · ISIS tiene 4,8% de MS · DIVINA (-4,4%) y KALA (-9,0%) retroceden · IE=106 confirma que vamos en la dirección correcta.</div>
+
+<!-- CHART: Drospirenona Sola -->
+<div class="sub-title">Drospirenona Sola (sin estrógenos) — ISIS FREE crece más que Elea</div>
+<div class="chart-card">
+  <h3>📈 ISIS FREE vs SLINDA (Elea) — Evolución mensual 2024 y 2025</h3>
+  <div class="chart-wrap" style="height:320px"><canvas id="chartIsisFreeMensual"></canvas></div>
+  <p class="chart-note">ISIS FREE creció +22,6% vs SLINDA +14,8% en 2025 · Siegfried supera al líder en ritmo de crecimiento</p>
+</div>
+
+<div class="chart-grid-2">
+  <div class="chart-card">
+    <h3>📊 Mercado DRSP Sola — Competidores 2024 vs 2025</h3>
+    <div class="chart-wrap" style="height:280px"><canvas id="chartDrspSolaComp"></canvas></div>
+  </div>
+  <div class="chart-card">
+    <h3>📊 Market Share DRSP Sola — 2024 vs 2025</h3>
+    <div class="chart-wrap" style="height:280px"><canvas id="chartDrspSolaMS"></canvas></div>
+    <p class="chart-note">ISIS FREE: 2° del mercado y reduciendo brecha con el líder</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- ═══════════════════════════ 2. SIDERBLUT COMPLEX ═══════════════════════════ -->
+<div id="siderblut" class="sec-title">2. SIDERBLUT COMPLEX — Hierro Combinado B03A2</div>
+
+<div class="share-timeline">
+  <div class="sy"><div class="yr">2021</div><div class="pct" style="color:var(--muted)">51,0%</div></div>
+  <div class="sy-arrow">→</div>
+  <div class="sy"><div class="yr">2022</div><div class="pct">51,9%</div></div>
+  <div class="sy-arrow">→</div>
+  <div class="sy"><div class="yr">2023</div><div class="pct" style="color:var(--blue)">56,2%</div></div>
+  <div class="sy-arrow">→</div>
+  <div class="sy"><div class="yr">2024</div><div class="pct" style="color:var(--green)">60,0%</div></div>
+  <div class="sy-arrow">→</div>
+  <div class="sy"><div class="yr">2025</div><div class="pct" style="color:var(--red);font-size:28px">62,3% 🥇</div></div>
+</div>
+
+<div class="chart-grid-2">
+  <div class="chart-card">
+    <h3>📈 Market Share — Evolución 2021→2025 (todos los competidores)</h3>
+    <div class="chart-wrap" style="height:300px"><canvas id="chartSiderblutShare"></canvas></div>
+    <p class="chart-note">Siderblut Complex: único producto con crecimiento sostenido de share 5 años seguidos</p>
+  </div>
+  <div class="chart-card">
+    <h3>📊 Volumen anual — Todos los competidores 2021–2025</h3>
+    <div class="chart-wrap" style="height:300px"><canvas id="chartSiderblutVol"></canvas></div>
+    <p class="chart-note">Siegfried: +69.0% de crecimiento acumulado en 5 años</p>
+  </div>
+</div>
+
+<div class="sub-title">Prescripciones — Clínica Médica y Ginecología</div>
+<div class="chart-grid-2">
+  <div class="chart-card">
+    <h3>📊 Recetas por especialidad — Dic 2024 vs Dic 2025</h3>
+    <div class="chart-wrap" style="height:280px"><canvas id="chartSiderblutRecEsp"></canvas></div>
+    <p class="chart-note">CLM: IE 101,8 ✓ · GINECO: IE 97,7 ⚠ — oportunidad de mayor penetración</p>
+  </div>
+  <div class="chart-card">
+    <h3>📊 % Share Siegfried por especialidad (Dic 2024 vs 2025)</h3>
+    <div class="chart-wrap" style="height:280px"><canvas id="chartSiderblutPctEsp"></canvas></div>
+    <p class="chart-note">Ganamos share en todas las especialidades, aunque en GINECO hay más para crecer</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- ═══════════════════════════ 3. TRIP D3 ═══════════════════════════ -->
+<div id="tripd3" class="sec-title">3. TRIP D3 — Vitamina D (Colecalciferol)</div>
+
+<div class="grid-3">
+  <div class="mcard green"><div class="ml">TRIP D3 x1 · 2025</div><div class="mv">68.927</div><div class="ms">uds <span class="up">▲+23,9%</span></div></div>
+  <div class="mcard green"><div class="ml">TRIP D3 x3 · 2025</div><div class="mv">195.278</div><div class="ms">uds <span class="up">▲+29,0%</span></div></div>
+  <div class="mcard gold"><div class="ml">Mercado x4 · 2025</div><div class="mv">409.763</div><div class="ms">uds <span class="up">▲+102,9%</span> — sin x4 Siegfried</div></div>
+</div>
+
+<div class="chart-card">
+  <h3>📈 TRIP D3 — Evolución mensual por presentación · 2024 vs 2025</h3>
+  <div class="chart-wrap" style="height:320px"><canvas id="chartTripD3Mensual"></canvas></div>
+  <p class="chart-note">Ambas presentaciones crecen mes a mes en 2025 vs 2024. La x3 es el motor principal del portfolio.</p>
+</div>
+
+<div class="chart-grid-2">
+  <div class="chart-card">
+    <h3>📊 Crecimiento x1 vs x3 — Acumulado 2024 vs 2025</h3>
+    <div class="chart-wrap" style="height:280px"><canvas id="chartTripD3Acum"></canvas></div>
+  </div>
+  <div class="chart-card">
+    <h3>🎯 Mercado x4 — Oportunidad para Trip D3</h3>
+    <div class="chart-wrap" style="height:280px"><canvas id="chartTripD3x4"></canvas></div>
+    <p class="chart-note">Siegfried NO tiene x4 — deja 409K unidades/año a la competencia</p>
+  </div>
+</div>
+
+<div class="ibox alert"><strong>El mercado x4 ya vale 409.763 unidades anuales (+102,9%)</strong>
+Roemmers, Casasco, Baliarda y Gador ya están capturando ese segmento. Siegfried sin x4 deja ese mercado completo a la competencia.</div>
+
+<hr>
+
+<!-- ═══════════════════════════ 4. CALCIO DUPOMAR ═══════════════════════════ -->
+<div id="calcio" class="sec-title">4. CALCIO DUPOMAR — Calcio Base &amp; Calcio Citrato</div>
+
+<div class="ibox info"><strong>Punto de inflexión visible en los datos</strong>
+Antes de julio 2025, Calcio Base caía entre -7% y -17% vs 2024. Desde agosto 2025, con el efecto de la promoción, el producto comienza a crecer sostenidamente.</div>
+
+<div class="chart-card">
+  <h3>📈 Calcio Base Dupomar — Evolución mensual 2024 vs 2025 (Inicio promo: Julio 2025)</h3>
+  <div class="chart-wrap" style="height:320px"><canvas id="chartCalcioBase"></canvas></div>
+  <p class="chart-note">La línea vertical marca el inicio de la promoción. A partir de agosto, 2025 supera consistentemente a 2024.</p>
+</div>
+
+<div class="chart-grid-2">
+  <div class="chart-card">
+    <h3>📊 Variación % mensual Calcio Base (2025 vs 2024)</h3>
+    <div class="chart-wrap" style="height:260px"><canvas id="chartCalcioVar"></canvas></div>
+    <p class="chart-note">Rojo = antes de promo · Verde = después de promo</p>
+  </div>
+  <div class="chart-card">
+    <h3>🆕 Calcio Citrato Dupomar D3 — Lanzamiento Nov 2025</h3>
+    <div class="chart-wrap" style="height:260px"><canvas id="chartCalcioCit"></canvas></div>
+    <p class="chart-note">Primeros meses post-lanzamiento — tendencia a consolidar en 2026</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- ═══════════════════════════ 5. DELTROX ═══════════════════════════ -->
+<div id="deltrox" class="sec-title">5. DELTROX NF — Ibandronato / Osteoporosis</div>
+
+<div class="grid-4">
+  <div class="mcard"><div class="ml">Prom. mensual H1 2025 (sin promo)</div><div class="mv">357</div><div class="ms">uds/mes</div></div>
+  <div class="mcard green"><div class="ml">Prom. mensual H2 2025 (con promo)</div><div class="mv">669</div><div class="ms">uds/mes <span class="up">▲+87%</span></div></div>
+  <div class="mcard green"><div class="ml">Julio 2025 (1° mes promo)</div><div class="mv">1.122</div><div class="ms"><span class="up">▲+231%</span> vs Jul 2024</div></div>
+  <div class="mcard green"><div class="ml">Año 2025 total</div><div class="mv">6.154</div><div class="ms">uds <span class="up">▲+48,7%</span> vs 2024</div></div>
+</div>
+
+<div class="chart-card">
+  <h3>📈 DELTROX NF — Evolución mensual 2024 vs 2025 (Inicio promo: Julio 2025)</h3>
+  <div class="chart-wrap" style="height:320px"><canvas id="chartDeltroxMensual"></canvas></div>
+  <p class="chart-note">La línea vertical marca el inicio de la promoción. El impacto es inmediato y sostenido en todo el H2.</p>
+</div>
+
+<div class="chart-grid-2">
+  <div class="chart-card">
+    <h3>📊 Market Share mensual DELTROX NF — 2024 vs 2025</h3>
+    <div class="chart-wrap" style="height:270px"><canvas id="chartDeltroxMS"></canvas></div>
+    <p class="chart-note">El share prácticamente se duplicó desde el inicio de la promoción</p>
+  </div>
+  <div class="chart-card">
+    <h3>📊 Competidores ibandronato — 2024 vs 2025</h3>
+    <div class="chart-wrap" style="height:270px"><canvas id="chartDeltroxComp"></canvas></div>
+    <p class="chart-note">Mercado -11,1% total — DELTROX NF fue el único en crecer</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- ═══════════════════════════ 6. CLIMATIX ═══════════════════════════ -->
+<div id="climatix" class="sec-title">6. CLIMATIX — Tibolona / Menopausia</div>
+
+<div class="grid-4">
+  <div class="mcard green"><div class="ml">Unidades 2025</div><div class="mv">137.774</div><div class="ms"><span class="up">▲+18,9%</span> vs 2024</div></div>
+  <div class="mcard green"><div class="ml">Market Share 2025</div><div class="mv">41,7%</div><div class="ms">Líder 🥇 (vs 37,3% en 2024)</div></div>
+  <div class="mcard green"><div class="ml">MS Prescriptivo 2025</div><div class="mv">38,85%</div><div class="ms"><span class="up">▲+4,47 pp</span> vs 2024</div></div>
+  <div class="mcard blue"><div class="ml">Médicos prescriptores</div><div class="mv">7.380</div><div class="ms">activos en 2025</div></div>
+</div>
+
+<div class="chart-card">
+  <h3>📈 CLIMATIX — Market share mensual 2025 vs 2024 (Tibolona)</h3>
+  <div class="chart-wrap" style="height:320px"><canvas id="chartClimatixMensual"></canvas></div>
+  <p class="chart-note">El share supera el 40% en todos los meses de 2025. En 2024 oscilaba entre 29% y 42%.</p>
+</div>
+
+<div class="chart-grid-2">
+  <div class="chart-card">
+    <h3>📊 Volumen por competidor — 2024 vs 2025</h3>
+    <div class="chart-wrap" style="height:280px"><canvas id="chartClimatixComp"></canvas></div>
+    <p class="chart-note">Climatix: +18,9% · PARACLIM: +1,8% · DISCRETAL: -3,9%</p>
+  </div>
+  <div class="chart-card">
+    <h3>📊 Market Share prescriptivo — Evolución 2023, 2024 y 2025</h3>
+    <div class="chart-wrap" style="height:280px"><canvas id="chartClimatixRec"></canvas></div>
+    <p class="chart-note">Climatix gana +4,47 pp por año. PARACLIM pierde -2,42 pp. Tendencia inequívoca.</p>
+  </div>
+</div>
+
+<div class="ibox ok"><strong>3 años ganando share prescriptivo sin parar</strong>
+2023: 30,62% → 2024: 34,38% → 2025: 38,85%. Climatix ganó +8,23 pp en 3 años mientras PARACLIM (Elea) perdió -5,04 pp en el mismo período.</div>
+
+</div><!-- /wrap -->
+
+<div class="footer">
+  Análisis elaborado a partir de datos IMS/IQVIA Argentina · Enero 2024 – Diciembre 2025 · Prescripciones: Diciembre 2024 vs Diciembre 2025 · Climatix recetas: 2023–2025 · Siegfried Argentina · Convención Línea Mujer 2026
+</div>
+
+<script>
+// ─── GLOBALS ────────────────────────────────────────────────────────
+Chart.defaults.font.family = "'Segoe UI', Arial, sans-serif";
+Chart.defaults.font.size = 12;
+Chart.defaults.plugins.tooltip.padding = 10;
+Chart.defaults.plugins.tooltip.cornerRadius = 8;
+Chart.defaults.plugins.legend.labels.padding = 16;
+
+const SIE   = 'rgba(192,57,43,1)';
+const SIE_F = 'rgba(192,57,43,0.15)';
+const SIE_B = 'rgba(192,57,43,0.6)';
+const ELEA  = 'rgba(26,82,118,1)';
+const ELEA_F= 'rgba(26,82,118,0.15)';
+const GAD   = 'rgba(30,132,73,1)';
+const BEB   = 'rgba(125,60,152,1)';
+const BAY   = 'rgba(212,172,13,1)';
+const TRB   = 'rgba(40,116,166,1)';
+const ROM   = 'rgba(39,174,96,1)';
+const BAL   = 'rgba(211,84,0,1)';
+const GREY  = 'rgba(127,140,141,0.7)';
+const MONTHS= ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+// helper
+function fmt(n){return n.toLocaleString('es-AR')}
+
+// ─── 1. ISIS MOLECULAS (Donut) ───────────────────────────────────────
+new Chart(document.getElementById('chartIsisMoleculas'),{
+  type:'doughnut',
+  data:{
+    labels:['DRSP+EE (Alta/Baja dosis)','EE+Levonorgestrel','DRSP Sola (sin estrógeno)','Estradiol+Nomeg.','EE+Gestodeno','Desogestrel solo','Dienogest+E2','Otras'],
+    datasets:[{
+      data:[40.6,25.5,11.3,7.1,6.1,3.8,3.0,2.6],
+      backgroundColor:['rgba(192,57,43,0.85)','rgba(26,82,118,0.8)','rgba(30,132,73,0.85)','rgba(125,60,152,0.8)','rgba(212,172,13,0.8)','rgba(40,116,166,0.7)','rgba(211,84,0,0.7)','rgba(127,140,141,0.6)'],
+      borderWidth:2,borderColor:'#fff'
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'right',labels:{font:{size:11},boxWidth:14}},
+      tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed}%`}}
+    }
+  }
+});
+
+// ─── 2. ISIS IE por segmento (Bar horizontal) ───────────────────────
+new Chart(document.getElementById('chartIsisIE'),{
+  type:'bar',
+  data:{
+    labels:['Alta Dosis\n(ISIS)','Baja Dosis 21+7\n(ISIS MINI)','Baja Dosis 24+4\n(ISIS MINI 24)','DRSP Sola\n(ISIS FREE)'],
+    datasets:[{
+      label:'Índice de Evolución (IE)',
+      data:[106,102,102,97],
+      backgroundColor:ctx=>{
+        const v=ctx.raw; return v>=100?'rgba(30,132,73,0.8)':'rgba(231,76,60,0.8)';
+      },
+      borderColor:ctx=>{const v=ctx.raw;return v>=100?'rgba(30,132,73,1)':'rgba(231,76,60,1)';},
+      borderWidth:2,borderRadius:6
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      tooltip:{callbacks:{label:ctx=>`IE: ${ctx.raw} ${ctx.raw>=100?'✓ Ganamos share':'⚠ Mercado creció más rápido'}`}}
+    },
+    scales:{
+      y:{min:90,max:115,
+        grid:{color:'rgba(0,0,0,.06)'},
+        ticks:{callback:v=>v}
+      },
+      x:{grid:{display:false}}
+    },
+    plugins:{annotation:{annotations:{line100:{type:'line',yMin:100,yMax:100,borderColor:'rgba(0,0,0,0.4)',borderWidth:2,borderDash:[6,4],label:{content:'IE = 100',enabled:true,position:'end',backgroundColor:'rgba(0,0,0,0.6)',color:'white',font:{size:11}}}}}}
+  }
+});
+
+// ─── 3. Alta Dosis MS 2025 (Bar horizontal) ─────────────────────────
+new Chart(document.getElementById('chartAltaDosisMS'),{
+  type:'bar',
+  data:{
+    labels:['DIVINA (Elea)','KALA (Bernabó)','DAMSEL (Gador)','KIRUM (Adium)','YASMIN (Bayer)','JADE (Craveri)','ISIS (Siegfried)','UMMA (Biotenk)'],
+    datasets:[{
+      label:'Market Share 2025',
+      data:[25.8,20.0,18.5,10.6,9.2,5.4,4.8,2.3],
+      backgroundColor:['rgba(26,82,118,0.7)','rgba(125,60,152,0.7)','rgba(30,132,73,0.7)','rgba(40,116,166,0.7)','rgba(212,172,13,0.7)','rgba(211,84,0,0.7)',SIE,'rgba(127,140,141,0.6)'],
+      borderRadius:5,borderWidth:0
+    }]
+  },
+  options:{
+    indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      tooltip:{callbacks:{label:ctx=>`MS 2025: ${ctx.raw}%`}}
+    },
+    scales:{x:{max:32,ticks:{callback:v=>v+'%'},grid:{color:'rgba(0,0,0,.05)'}},y:{grid:{display:false}}}
+  }
+});
+
+// ─── 4. Alta Dosis Evolución (Grouped Bar) ───────────────────────────
+new Chart(document.getElementById('chartAltaDosisEvol'),{
+  type:'bar',
+  data:{
+    labels:['DIVINA\n(Elea)','KALA\n(Bernabó)','DAMSEL\n(Gador)','KIRUM\n(Adium)','YASMIN\n(Bayer)','JADE\n(Craveri)','ISIS\n(Siegfried)'],
+    datasets:[
+      {label:'2024',data:[1151399,936364,771216,409944,427698,279200,200575],backgroundColor:'rgba(127,140,141,0.45)',borderRadius:4},
+      {label:'2025',data:[1100668,852021,787777,452264,394055,231963,203810],backgroundColor:[ELEA,BEB,GAD,TRB,BAY,'rgba(211,84,0,0.8)',SIE],borderRadius:4}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom'},
+      tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmt(ctx.raw)} uds`}}
+    },
+    scales:{y:{ticks:{callback:v=>(v/1000).toFixed(0)+'K'},grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false}}}
+  }
+});
+
+// ─── 5. ISIS FREE vs SLINDA mensual (Line) ───────────────────────────
+const isisFree2024=[45426,36488,39928,42858,42188,36443,43340,42013,43066,45109,36982,44888];
+const isisFree2025=[51208,43411,43230,54629,55960,45181,65495,42792,52225,54547,47685,54884];
+const slinda2024  =[54010,54469,47178,46417,56331,48744,59613,50525,51899,54908,54354,54625];
+const slinda2025  =[64264,51401,50572,66374,62533,60301,60692,59736,66437,63548,55522,65478];
+
+new Chart(document.getElementById('chartIsisFreeMensual'),{
+  type:'line',
+  data:{
+    labels:MONTHS,
+    datasets:[
+      {label:'ISIS FREE 2025',data:isisFree2025,borderColor:SIE,backgroundColor:SIE_F,borderWidth:3,tension:.3,fill:true,pointRadius:4,pointHoverRadius:7},
+      {label:'ISIS FREE 2024',data:isisFree2024,borderColor:SIE_B,backgroundColor:'transparent',borderWidth:2,borderDash:[5,5],tension:.3,pointRadius:3},
+      {label:'SLINDA (Elea) 2025',data:slinda2025,borderColor:ELEA,backgroundColor:ELEA_F,borderWidth:3,tension:.3,fill:true,pointRadius:4,pointHoverRadius:7},
+      {label:'SLINDA (Elea) 2024',data:slinda2024,borderColor:'rgba(26,82,118,0.4)',backgroundColor:'transparent',borderWidth:2,borderDash:[5,5],tension:.3,pointRadius:3}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom'},tooltip:{mode:'index',intersect:false,callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmt(ctx.raw)} uds`}}},
+    scales:{y:{ticks:{callback:v=>(v/1000).toFixed(0)+'K'},grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false}}}
+  }
+});
+
+// ─── 6. DRSP Sola competidores bar ───────────────────────────────────
+new Chart(document.getElementById('chartDrspSolaComp'),{
+  type:'bar',
+  data:{
+    labels:['SLINDA\n(Elea)','ISIS FREE\n(Siegfried)','FUCSIA\n(Gador)','KALI\n(Bernabó)','ONE\n(Craveri)'],
+    datasets:[
+      {label:'2024',data:[633073,498729,246019,128291,0],backgroundColor:'rgba(127,140,141,0.45)',borderRadius:4},
+      {label:'2025',data:[726858,611247,369420,176589,15046],backgroundColor:[ELEA,SIE,GAD,BEB,'rgba(211,84,0,0.7)'],borderRadius:4}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmt(ctx.raw)} uds`}}},
+    scales:{y:{ticks:{callback:v=>(v/1000).toFixed(0)+'K'},grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false}}}
+  }
+});
+
+// ─── 7. DRSP Sola MS Donut ───────────────────────────────────────────
+new Chart(document.getElementById('chartDrspSolaMS'),{
+  type:'doughnut',
+  data:{
+    labels:['SLINDA (Elea)','ISIS FREE (Siegfried)','FUCSIA (Gador)','KALI (Bernabó)','Otras'],
+    datasets:[{
+      data:[38.2,32.1,19.4,9.3,1.0],
+      backgroundColor:[ELEA,SIE,GAD,BEB,GREY],
+      borderWidth:2,borderColor:'#fff'
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{boxWidth:14,font:{size:11}}},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed}%`}}}
+  }
+});
+
+// ─── 8. SIDERBLUT COMPLEX Share Evolution (Line) ─────────────────────
+const sbYears=['2021','2022','2023','2024','2025'];
+new Chart(document.getElementById('chartSiderblutShare'),{
+  type:'line',
+  data:{
+    labels:sbYears,
+    datasets:[
+      {label:'Siderblut Complex (Siegfried)',data:[51.0,51.9,56.2,60.0,62.3],borderColor:SIE,backgroundColor:SIE_F,borderWidth:4,fill:true,tension:.3,pointRadius:6,pointHoverRadius:9,pointBackgroundColor:SIE},
+      {label:'VITALIX COMPLEX (Roemmers)',data:[20.3,19.1,16.4,15.4,16.2],borderColor:ROM,backgroundColor:'transparent',borderWidth:2,tension:.3,pointRadius:4},
+      {label:'HEMOVIT (Baliarda)',data:[22.3,22.2,20.0,17.8,15.7],borderColor:BAL,backgroundColor:'transparent',borderWidth:2,tension:.3,pointRadius:4},
+      {label:'ACIFOL FE (Domínguez)',data:[4.0,4.9,5.4,6.0,5.5],borderColor:GAD,backgroundColor:'transparent',borderWidth:2,tension:.3,pointRadius:4}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom'},tooltip:{mode:'index',intersect:false,callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.raw}%`}}},
+    scales:{y:{min:0,max:75,ticks:{callback:v=>v+'%'},grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false}}}
+  }
+});
+
+// ─── 9. SIDERBLUT COMPLEX Volumen (Stacked Bar) ──────────────────────
+new Chart(document.getElementById('chartSiderblutVol'),{
+  type:'bar',
+  data:{
+    labels:sbYears,
+    datasets:[
+      {label:'Siderblut Complex (Siegfried)',data:[165200,191985,253703,266823,279191],backgroundColor:SIE,borderRadius:4},
+      {label:'VITALIX COMPLEX (Roemmers)',data:[65774,70705,73768,68404,72699],backgroundColor:ROM,borderRadius:0},
+      {label:'HEMOVIT (Baliarda)',data:[72077,82109,90094,79298,70437],backgroundColor:BAL,borderRadius:0},
+      {label:'ACIFOL FE (Domínguez)',data:[12930,17963,24317,26866,24445],backgroundColor:GAD,borderRadius:0},
+      {label:'Otros',data:[7148,7290,9219,3640,1525],backgroundColor:GREY,borderRadius:0}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom'},tooltip:{mode:'index',callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmt(ctx.raw)} uds`}}},
+    scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,ticks:{callback:v=>(v/1000).toFixed(0)+'K'},grid:{color:'rgba(0,0,0,.05)'}}}
+  }
+});
+
+// ─── 10. SIDERBLUT Recetas por especialidad ──────────────────────────
+new Chart(document.getElementById('chartSiderblutRecEsp'),{
+  type:'bar',
+  data:{
+    labels:['Clínica Médica','Ginecología','Hematología','Cardiología','Pediatría','Endocrino'],
+    datasets:[
+      {label:'Recetas Totales Dic 2024',data:[105013,72271,13099,11050,6195,2879],backgroundColor:'rgba(127,140,141,0.4)',borderRadius:4},
+      {label:'Recetas Totales Dic 2025',data:[101577,67118,11924,10205,6369,2958],backgroundColor:'rgba(26,82,118,0.6)',borderRadius:4},
+      {label:'Recetas Siegfried Dic 2025',data:[26178,15869,1900,2161,1061,764],backgroundColor:SIE,borderRadius:4}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom'},tooltip:{mode:'index',callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmt(ctx.raw)}`}}},
+    scales:{y:{ticks:{callback:v=>(v/1000).toFixed(0)+'K'},grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false}}}
+  }
+});
+
+// ─── 11. SIDERBLUT % Share especialidad ─────────────────────────────
+new Chart(document.getElementById('chartSiderblutPctEsp'),{
+  type:'bar',
+  data:{
+    labels:['Clínica Médica','Ginecología','Hematología','Cardiología','Pediatría','Endocrino'],
+    datasets:[
+      {label:'% Siegfried Dic 2024',data:[24.5,21.6,15.3,19.7,16.9,13.8],backgroundColor:'rgba(192,57,43,0.3)',borderRadius:4},
+      {label:'% Siegfried Dic 2025',data:[25.8,23.6,15.9,21.2,16.7,25.8],backgroundColor:SIE,borderRadius:4}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom'},tooltip:{mode:'index',callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.raw}%`}}},
+    scales:{y:{max:35,ticks:{callback:v=>v+'%'},grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false}}}
+  }
+});
+
+// ─── 12. TRIP D3 Mensual (Line multi) ───────────────────────────────
+const td3_x1_24=[4087,3707,3869,4283,5540,4448,4430,5261,5612,5507,4341,4572];
+const td3_x1_25=[4426,4420,5351,6256,5185,5809,7117,5924,5842,6533,5476,6588];
+const td3_x3_24=[8250,7316,8599,10337,14277,13195,16658,14007,15487,14875,14955,13410];
+const td3_x3_25=[10502,10403,11498,14864,17874,16671,19023,19204,20772,19070,17875,17522];
+
+new Chart(document.getElementById('chartTripD3Mensual'),{
+  type:'line',
+  data:{
+    labels:MONTHS,
+    datasets:[
+      {label:'x3 · 2025',data:td3_x3_25,borderColor:SIE,backgroundColor:SIE_F,borderWidth:3,fill:true,tension:.3,pointRadius:4,pointHoverRadius:7},
+      {label:'x3 · 2024',data:td3_x3_24,borderColor:SIE_B,backgroundColor:'transparent',borderWidth:2,borderDash:[5,5],tension:.3,pointRadius:3},
+      {label:'x1 · 2025',data:td3_x1_25,borderColor:ELEA,backgroundColor:ELEA_F,borderWidth:3,fill:false,tension:.3,pointRadius:4,pointHoverRadius:7},
+      {label:'x1 · 2024',data:td3_x1_24,borderColor:'rgba(26,82,118,0.4)',backgroundColor:'transparent',borderWidth:2,borderDash:[5,5],tension:.3,pointRadius:3}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom'},tooltip:{mode:'index',intersect:false,callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmt(ctx.raw)} uds`}}},
+    scales:{y:{ticks:{callback:v=>(v/1000).toFixed(1)+'K'},grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false}}}
+  }
+});
+
+// ─── 13. TRIP D3 Acumulado Bar ───────────────────────────────────────
+new Chart(document.getElementById('chartTripD3Acum'),{
+  type:'bar',
+  data:{
+    labels:['TRIP D3 x1','TRIP D3 x3','TOTAL'],
+    datasets:[
+      {label:'2024',data:[55657,151366,207023],backgroundColor:'rgba(192,57,43,0.3)',borderRadius:5},
+      {label:'2025',data:[68927,195278,264205],backgroundColor:SIE,borderRadius:5}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom'},
+      tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmt(ctx.raw)} uds`}},
+      datalabels:{display:false}
+    },
+    scales:{y:{ticks:{callback:v=>(v/1000).toFixed(0)+'K'},grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false}}}
+  }
+});
+
+// ─── 14. TRIP D3 x4 mercado ─────────────────────────────────────────
+new Chart(document.getElementById('chartTripD3x4'),{
+  type:'bar',
+  data:{
+    labels:['RAQUIFEROL D3\n(Roemmers)','CRADA\n(Casasco)','DEVISAL CB\n(Baliarda)','GADOFEROL CB\n(Gador)','SUBICAL CB\n(Bernabó)','TRIP D3 x4\n(Siegfried)\n🎯 Pendiente'],
+    datasets:[
+      {label:'2024',data:[118399,45120,28942,0,8888,0],backgroundColor:'rgba(127,140,141,0.4)',borderRadius:4},
+      {label:'2025',data:[202058,94241,65775,31995,15694,0],backgroundColor:[ROM,GAD,BAL,TRB,BEB,'rgba(192,57,43,0.3)'],borderRadius:4}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmt(ctx.raw)} uds`}}},
+    scales:{y:{ticks:{callback:v=>(v/1000).toFixed(0)+'K'},grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false}}}
+  }
+});
+
+// ─── 15. CALCIO BASE Mensual (Line + anotación) ──────────────────────
+const cb24=[26348,23644,26320,26825,27559,25486,28698,25748,23730,23900,23256,23823];
+const cb25=[22688,21301,21959,24004,24320,23610,27696,26023,25581,26462,21602,27017];
+
+new Chart(document.getElementById('chartCalcioBase'),{
+  type:'line',
+  data:{
+    labels:MONTHS,
+    datasets:[
+      {label:'Calcio Base 2025',data:cb25,borderColor:SIE,backgroundColor:SIE_F,borderWidth:3,fill:true,tension:.3,pointRadius:5,pointHoverRadius:8,
+       pointBackgroundColor:cb25.map((_,i)=>i>=6?SIE:'rgba(192,57,43,0.4)'),
+       pointRadius:cb25.map((_,i)=>i===6?9:4)},
+      {label:'Calcio Base 2024',data:cb24,borderColor:'rgba(26,82,118,0.7)',backgroundColor:'transparent',borderWidth:2,borderDash:[6,4],tension:.3,pointRadius:3}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom'},
+      tooltip:{mode:'index',intersect:false,callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmt(ctx.raw)} uds`,afterBody:ctx=>{const i=ctx[0].dataIndex;if(i===6)return '← INICIO PROMOCIÓN';return '';}}},
+      annotation:{annotations:{
+        promoLine:{type:'line',xMin:6,xMax:6,borderColor:'rgba(212,172,13,0.9)',borderWidth:3,borderDash:[8,4],label:{content:'🚀 Inicio Promo Julio',enabled:true,position:'start',backgroundColor:'rgba(212,172,13,0.9)',color:'#000',font:{size:11,weight:'bold'}}},
+        promoZone:{type:'box',xMin:6.5,xMax:11.5,backgroundColor:'rgba(30,132,73,0.06)',borderWidth:0,label:{content:'Período con Promoción Activa',enabled:true,position:'center',color:'rgba(30,132,73,0.5)',font:{size:11}}}
+      }}
+    },
+    scales:{y:{min:18000,ticks:{callback:v=>(v/1000).toFixed(0)+'K'},grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false}}}
+  }
+});
+
+// ─── 16. CALCIO Variación % mensual (Bar coloreado) ──────────────────
+const cbVar=cb25.map((v,i)=>+((v/cb24[i]-1)*100).toFixed(1));
+new Chart(document.getElementById('chartCalcioVar'),{
+  type:'bar',
+  data:{
+    labels:MONTHS,
+    datasets:[{
+      label:'Var. % vs 2024',
+      data:cbVar,
+      backgroundColor:cbVar.map((v,i)=>i<6?(v>=0?'rgba(30,132,73,0.6)':'rgba(192,57,43,0.7)'):(v>=0?'rgba(30,132,73,0.85)':'rgba(192,57,43,0.4)')),
+      borderColor:cbVar.map(v=>v>=0?'rgba(30,132,73,1)':'rgba(192,57,43,1)'),
+      borderWidth:1,borderRadius:5
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      tooltip:{callbacks:{label:ctx=>`${ctx.raw>0?'+':''}${ctx.raw}% vs 2024`}},
+      annotation:{annotations:{
+        cero:{type:'line',yMin:0,yMax:0,borderColor:'rgba(0,0,0,0.4)',borderWidth:2},
+        promo:{type:'line',xMin:5.5,xMax:5.5,borderColor:'rgba(212,172,13,0.9)',borderWidth:2,borderDash:[6,4],label:{content:'Inicio Promo',enabled:true,position:'start',backgroundColor:'rgba(212,172,13,0.9)',color:'#000',font:{size:10}}}
+      }}
+    },
+    scales:{y:{ticks:{callback:v=>`${v}%`},grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false}}}
+  }
+});
+
+// ─── 17. CALCIO CITRATO Lanzamiento ─────────────────────────────────
+new Chart(document.getElementById('chartCalcioCit'),{
+  type:'bar',
+  data:{
+    labels:['Oct 2025','Nov 2025','Dic 2025'],
+    datasets:[{
+      label:'Calcio Citrato Dupomar D3',
+      data:[291,1822,1171],
+      backgroundColor:[SIE_B,SIE,'rgba(192,57,43,0.75)'],
+      borderRadius:8,borderWidth:0
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      tooltip:{callbacks:{label:ctx=>`${fmt(ctx.raw)} unidades`}}
+    },
+    scales:{y:{ticks:{callback:v=>fmt(v)},grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false}}}
+  }
+});
+
+// ─── 18. DELTROX NF Mensual (Bar + línea) ───────────────────────────
+const dx24=[395,344,389,307,396,359,339,339,304,357,288,321];
+const dx25=[294,257,402,325,336,525,1122,568,400,522,899,504];
+new Chart(document.getElementById('chartDeltroxMensual'),{
+  type:'bar',
+  data:{
+    labels:MONTHS,
+    datasets:[
+      {label:'2024',data:dx24,backgroundColor:'rgba(127,140,141,0.4)',borderRadius:4,order:2},
+      {label:'2025',data:dx25,backgroundColor:dx25.map((_,i)=>i>=6?SIE:'rgba(192,57,43,0.4)'),borderRadius:4,order:2},
+      {label:'Tendencia 2025',data:dx25,type:'line',borderColor:SIE,borderWidth:3,tension:.4,fill:false,pointRadius:0,order:1}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom'},
+      tooltip:{mode:'index',callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmt(ctx.raw)} uds`}},
+      annotation:{annotations:{
+        promoLine:{type:'line',xMin:5.5,xMax:5.5,borderColor:'rgba(212,172,13,0.9)',borderWidth:3,borderDash:[8,4],label:{content:'🚀 Inicio Promo',enabled:true,position:'start',backgroundColor:'rgba(212,172,13,0.9)',color:'#000',font:{size:11,weight:'bold'}}},
+        promoZone:{type:'box',xMin:6,xMax:11.5,backgroundColor:'rgba(30,132,73,0.07)',borderWidth:0}
+      }}
+    },
+    scales:{y:{ticks:{callback:v=>fmt(v)},grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false}}}
+  }
+});
+
+// ─── 19. DELTROX MS mensual ─────────────────────────────────────────
+const dxMkt24=[85642,82165,93064,87238,89825,90201,97020,93927,85775,93197,84107,80709];
+const dxMkt25=[74818,70824,77395,79648,81008,75443,86722,79561,79499,83134,75990,80906];
+const dxMS24=dx24.map((v,i)=>+(v/dxMkt24[i]*100).toFixed(2));
+const dxMS25=dx25.map((v,i)=>+(v/dxMkt25[i]*100).toFixed(2));
+new Chart(document.getElementById('chartDeltroxMS'),{
+  type:'line',
+  data:{
+    labels:MONTHS,
+    datasets:[
+      {label:'MS 2025',data:dxMS25,borderColor:SIE,backgroundColor:SIE_F,borderWidth:3,fill:true,tension:.3,pointRadius:4,pointHoverRadius:7,
+       pointBackgroundColor:dxMS25.map((_,i)=>i>=6?SIE:'rgba(192,57,43,0.3)')},
+      {label:'MS 2024',data:dxMS24,borderColor:'rgba(127,140,141,0.8)',backgroundColor:'transparent',borderWidth:2,borderDash:[5,5],tension:.3,pointRadius:3}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom'},tooltip:{mode:'index',callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.raw}%`}},
+    annotation:{annotations:{promoLine:{type:'line',xMin:5.5,xMax:5.5,borderColor:'rgba(212,172,13,0.9)',borderWidth:2,borderDash:[6,4],label:{content:'Promo',enabled:true,position:'start',backgroundColor:'rgba(212,172,13,0.8)',color:'#000',font:{size:10}}}}}},
+    scales:{y:{min:0,ticks:{callback:v=>v+'%'},grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false}}}
+  }
+});
+
+// ─── 20. DELTROX Competidores ────────────────────────────────────────
+new Chart(document.getElementById('chartDeltroxComp'),{
+  type:'bar',
+  data:{
+    labels:['IDENA\n(Adium)','FEMOREL\n(Elea)','BREXELL PLUS\n(TRB)','IBANLEG\n(Bernabó)','MESEL\n(Finadiet)','BANTUC\n(Baliarda)','DELTROX NF\n(Siegfried)'],
+    datasets:[
+      {label:'2024',data:[291010,283768,112381,103910,81604,52988,4138],backgroundColor:'rgba(127,140,141,0.4)',borderRadius:4},
+      {label:'2025',data:[271506,253104,103312,89798,66910,44363,6154],backgroundColor:[ELEA,ELEA,TRB,BEB,GAD,BAL,SIE],borderRadius:4}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom'},tooltip:{mode:'index',callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmt(ctx.raw)} uds`}}},
+    scales:{y:{ticks:{callback:v=>(v/1000).toFixed(0)+'K'},grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false}}}
+  }
+});
+
+// ─── 21. CLIMATIX Mensual (Line + area) ─────────────────────────────
+const cl24=[7592,8194,9086,9260,9498,8666,10278,10159,10364,11114,10322,11375];
+const cl25=[11106,10367,10684,11112,11355,11035,12035,11582,11581,12486,11031,13400];
+const clMkt24=[25928,24319,25749,26369,25970,23107,26141,25742,25425,26697,26598,28492];
+const clMkt25=[27284,25155,25914,26571,28229,26044,28514,27387,27728,28981,27222,31487];
+const clMS24=cl24.map((v,i)=>+(v/clMkt24[i]*100).toFixed(1));
+const clMS25=cl25.map((v,i)=>+(v/clMkt25[i]*100).toFixed(1));
+
+new Chart(document.getElementById('chartClimatixMensual'),{
+  type:'line',
+  data:{
+    labels:MONTHS,
+    datasets:[
+      {label:'MS Climatix 2025 (%)',data:clMS25,borderColor:SIE,backgroundColor:SIE_F,borderWidth:3,fill:true,tension:.3,pointRadius:5,pointHoverRadius:8,yAxisID:'y'},
+      {label:'MS Climatix 2024 (%)',data:clMS24,borderColor:SIE_B,backgroundColor:'transparent',borderWidth:2,borderDash:[5,5],tension:.3,pointRadius:3,yAxisID:'y'},
+      {label:'Unidades 2025',data:cl25,borderColor:ELEA,backgroundColor:'transparent',borderWidth:2,tension:.3,pointRadius:4,yAxisID:'y2'},
+      {label:'Unidades 2024',data:cl24,borderColor:'rgba(26,82,118,0.35)',backgroundColor:'transparent',borderWidth:1.5,borderDash:[5,5],tension:.3,pointRadius:3,yAxisID:'y2'}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom'},tooltip:{mode:'index',intersect:false,callbacks:{label:ctx=>ctx.yAxisID==='y'?`${ctx.dataset.label}: ${ctx.raw}%`:`${ctx.dataset.label}: ${fmt(ctx.raw)} uds`}}},
+    scales:{
+      y:{position:'left',min:25,max:50,ticks:{callback:v=>v+'%'},title:{display:true,text:'Market Share (%)'},grid:{color:'rgba(0,0,0,.05)'}},
+      y2:{position:'right',ticks:{callback:v=>(v/1000).toFixed(0)+'K'},title:{display:true,text:'Unidades'},grid:{display:false}},
+      x:{grid:{display:false}}
+    }
+  }
+});
+
+// ─── 22. CLIMATIX Competidores 2024 vs 2025 ─────────────────────────
+new Chart(document.getElementById('chartClimatixComp'),{
+  type:'bar',
+  data:{
+    labels:['CLIMATIX\n(Siegfried)','PARACLIM\n(Elea)','DISCRETAL\n(Beta)','KLIMASTRESS\n(Craveri)'],
+    datasets:[
+      {label:'2024',data:[115908,116584,68182,9863],backgroundColor:'rgba(127,140,141,0.45)',borderRadius:5},
+      {label:'2025',data:[137774,118694,65516,8532],backgroundColor:[SIE,ELEA,TRB,BAL],borderRadius:5}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom'},tooltip:{mode:'index',callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmt(ctx.raw)} uds`}}},
+    scales:{y:{ticks:{callback:v=>(v/1000).toFixed(0)+'K'},grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false}}}
+  }
+});
+
+// ─── 23. CLIMATIX Recetas prescriptivas ─────────────────────────────
+new Chart(document.getElementById('chartClimatixRec'),{
+  type:'bar',
+  data:{
+    labels:['CLIMATIX\n(Siegfried)','PARACLIM\n(Elea)','DISCRETAL\n(Beta)','TIBOLONA LNI','KLIMASTRESS\n(Craveri)'],
+    datasets:[
+      {label:'MS 2023 (%)',data:[30.62,41.34,18.02,4.05,5.66],backgroundColor:'rgba(192,57,43,0.2)',borderRadius:4},
+      {label:'MS 2024 (%)',data:[34.38,38.72,20.22,3.35,3.15],backgroundColor:'rgba(192,57,43,0.55)',borderRadius:4},
+      {label:'MS 2025 (%)',data:[38.85,36.30,18.83,3.51,2.36],backgroundColor:[SIE,ELEA,TRB,GAD,BAL],borderRadius:4}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom'},tooltip:{mode:'index',callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.raw}%`}}},
+    scales:{y:{ticks:{callback:v=>v+'%'},grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false}}}
+  }
+});
+</script>
+</body>
+</html>
